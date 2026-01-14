@@ -1,0 +1,11 @@
+MAX_FILE_SIZE_MB = 25
+CHUNK_SIZE_MB = 20
+DEFAULT_MODEL = "gpt-4o-mini-transcribe"
+SUPPORTED_FORMATS = ["mp3", "wav", "m4a", "aac", "flac", "ogg", "wma"]
+
+RETRY_MAX_ATTEMPTS = 3
+RETRY_MIN_SECONDS = 1
+RETRY_MAX_SECONDS = 10
+
+OPENAI_ENV_VAR = "OPENAI_API_KEY"
+TEMP_CHUNK_DIR = "temp_chunks"

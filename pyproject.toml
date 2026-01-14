@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "whisper-api-wrapper"
+version = "0.1.0"
+description = "CLI wrapper for OpenAI transcription with chunking"
+requires-python = ">=3.9"
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.scripts]
+whisper-cli = "whisper_cli.cli:main"

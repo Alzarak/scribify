@@ -1,8 +1,17 @@
 # Whisper API Wrapper - Audio Transcription CLI
 
 A Python CLI that transcribes large audio files using OpenAI's
-`gpt-4o-mini-transcribe` model. Files above 25MB are
-automatically chunked and merged into a single plain-text output.
+`gpt-4o-mini-transcribe` model. Files above 25MB are automatically
+chunked and merged into a single plain-text output, with progress
+feedback in the terminal.
+
+## Features
+
+- Auto-chunking for large files (keeps each chunk under the API limit)
+- Plain-text output to stdout or file
+- Progress UI with Rich (can be silenced)
+- Retry handling for transient API failures
+- Supports common formats (mp3, wav, m4a, aac, flac, ogg, wma)
 
 ## Requirements
 
@@ -37,6 +46,13 @@ export OPENAI_API_KEY="sk-your-key"
 
 You can copy `.env.example` to `.env` and set your key there if you prefer.
 
+## How It Works
+
+1. Validates the file and checks size.
+2. If under 25MB, transcribes directly.
+3. If over 25MB, splits into chunks, transcribes each, and merges results.
+4. Temporary chunks are cleaned up after completion.
+
 ## Usage
 
 ```bash
@@ -49,6 +65,12 @@ Options:
 - `--chunk-size` target chunk size in MB
 - `-q, --quiet` suppress progress UI
 - `-v, --verbose` verbose logging
+
+## Output
+
+- By default, transcripts are printed to stdout.
+- Use `-o/--output` to write a file.
+- Chunked transcripts are concatenated with newlines.
 
 ## Examples
 

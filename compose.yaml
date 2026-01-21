@@ -1,0 +1,92 @@
+services:
+  scribify-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: scribify-web
+    image: scribify:latest
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      # OpenAI API configuration
+      - OPENAI_API_KEY=${OPENAI_API_KEY:?OPENAI_API_KEY environment variable is required}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini-transcribe}
+      - OPENAI_TIMEOUT=${OPENAI_TIMEOUT:-300}
+
+      # Application settings
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+
+    volumes:
+      # Persist uploaded files and results
+      - scribify-uploads:/tmp/scribify-uploads
+      - scribify-results:/tmp/scribify-results
+
+      # Optional: Mount .env file if you prefer file-based config
+      # - ./.env:/app/.env:ro
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    security_opt:
+      - no-new-privileges:true
+
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+
+    read_only: false
+
+    tmpfs:
+      - /tmp:size=2G,mode=1777
+
+    labels:
+      - "com.scribify.description=Scribify Audio Transcription Web Service"
+      - "com.scribify.service=web"
+      - "com.scribify.version=1.0.0"
+
+    networks:
+      - scribify-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  scribify-uploads:
+    driver: local
+    labels:
+      - "com.scribify.volume=uploads"
+
+  scribify-results:
+    driver: local
+    labels:
+      - "com.scribify.volume=results"
+
+networks:
+  scribify-network:
+    driver: bridge
+    labels:
+      - "com.scribify.network=main"

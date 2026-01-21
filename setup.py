@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="whisper-api-wrapper",
+    name="scribify",
     version="0.1.0",
     packages=find_packages(exclude=("tests",)),
     install_requires=[
@@ -13,7 +13,7 @@ setup(
         "tenacity>=8.2.3",
     ],
     entry_points={
-        "console_scripts": ["whisper-cli=whisper_cli.cli:main"],
+        "console_scripts": ["scribify=scribify.cli:main"],
     },
     python_requires=">=3.9",
 )

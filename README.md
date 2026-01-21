@@ -1,17 +1,19 @@
-# Whisper API Wrapper - Audio Transcription CLI
+# Scribify
 
-A Python CLI that transcribes large audio files using OpenAI's
-`gpt-4o-mini-transcribe` model. Files above 25MB are automatically
-chunked and merged into a single plain-text output, with progress
-feedback in the terminal.
+A Python application that transcribes large audio files using OpenAI's
+`gpt-4o-mini-transcribe` model. Available as both a CLI tool and web interface.
+Files above 25MB are automatically chunked and merged into a single plain-text
+output, with progress feedback.
 
 ## Features
 
+- **Dual Interface**: CLI tool and web application
 - Auto-chunking for large files (keeps each chunk under the API limit)
 - Plain-text output to stdout or file
-- Progress UI with Rich (can be silenced)
+- Progress UI with Rich (can be silenced in CLI)
 - Retry handling for transient API failures
 - Supports common formats (mp3, wav, m4a, aac, flac, ogg, wma)
+- Docker support with best practices (multi-stage builds, non-root user, health checks)
 
 ## Requirements
 
@@ -33,7 +35,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 export OPENAI_API_KEY="sk-your-key"
-whisper-cli path/to/audio.mp3 -o output.txt
+scribify path/to/audio.mp3 -o output.txt
 ```
 
 ## Configuration
@@ -46,6 +48,45 @@ export OPENAI_API_KEY="sk-your-key"
 
 You can copy `.env.example` to `.env` and set your key there if you prefer.
 
+## Web Interface
+
+Run the web application for a browser-based transcription interface:
+
+### Local Development
+
+```bash
+# Install web dependencies
+pip install -r requirements.txt
+
+# Run the web server
+python web_app.py
+```
+
+Then open http://localhost:8000 in your browser.
+
+### Docker Deployment
+
+The easiest way to run the web interface is with Docker:
+
+```bash
+# Copy and configure environment
+cp .env.example .env
+# Edit .env and add your OPENAI_API_KEY
+
+# Start the service
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop the service
+docker compose down
+```
+
+Access the web interface at http://localhost:8000
+
+For detailed Docker configuration and production deployment, see [DOCKER.md](DOCKER.md).
+
 ## How It Works
 
 1. Validates the file and checks size.
@@ -53,10 +94,10 @@ You can copy `.env.example` to `.env` and set your key there if you prefer.
 3. If over 25MB, splits into chunks, transcribes each, and merges results.
 4. Temporary chunks are cleaned up after completion.
 
-## Usage
+## CLI Usage
 
 ```bash
-whisper-cli path/to/audio.mp3 -o output.txt
+scribify path/to/audio.mp3 -o output.txt
 ```
 
 Options:
@@ -77,13 +118,13 @@ Options:
 Small file:
 
 ```bash
-whisper-cli small.mp3 -o transcript.txt
+scribify small.mp3 -o transcript.txt
 ```
 
 Large file:
 
 ```bash
-whisper-cli large.mp3 --verbose -o transcript.txt
+scribify large.mp3 --verbose -o transcript.txt
 ```
 
 ## Notes
